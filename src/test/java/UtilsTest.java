@@ -1,6 +1,10 @@
 import org.example.Board;
+import org.example.Printer;
 import org.junit.jupiter.api.*;
 
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 
 import static org.example.Logics.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -231,5 +235,89 @@ public class UtilsTest {
             Assertions.assertFalse(result, "The inputs are adjacent.");
         }
 
+    }
+
+    @Nested
+    public class PrinterTest {
+
+        private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        private final PrintStream originalOut = System.out;
+
+        @BeforeEach
+        public void setUpStreams() {
+            outContent.reset(); // Reset the stream to clear any previous data
+            System.setOut(new PrintStream(outContent));
+        }
+
+        @AfterEach
+        public void restoreStreams() {
+            System.setOut(originalOut);
+        }
+
+        @Nested
+        class InvalidTests {
+
+            @Test
+            void testIntegerValue() {
+                Printer.Invalid.integerValue();
+                String outcome = outContent.toString();
+                outcome = outcome.replaceAll("[\\s]+$","");
+                Assertions.assertEquals("\nInvalid input. Please enter a valid Integer.", outcome);
+            }
+
+            @Test
+            void testOptionRangeChoice() {
+                Printer.Invalid.optionRangeChoice();
+                String outcome = outContent.toString();
+                outcome = outcome.replaceAll("[\\s]+$","");
+                Assertions.assertEquals("\nInvalid choice. Please choose a number between 1 and 5.", outcome);
+            }
+
+            @Test
+            void testPosition() {
+                Printer.Invalid.position();
+                String outcome = outContent.toString();
+                outcome = outcome.replaceAll("[\\s]+$","");
+                Assertions.assertEquals("\nInvalid position", outcome);
+            }
+
+            @Test
+            void testDiscoveredCell() {
+                Printer.Invalid.discoveredCell();
+                String outcome = outContent.toString();
+                outcome = outcome.replaceAll("[\\s]+$","");
+                Assertions.assertEquals("\nInvalid input. This cell cannot be flagged as its a discovered cell.", outcome);
+            }
+
+            @Test
+            void testNotFlaggedCell() {
+                Printer.Invalid.notFlaggedCell();
+                String outcome = outContent.toString();
+                outcome = outcome.replaceAll("[\\s]+$","");
+                Assertions.assertEquals("\nInvalid input. This cell cannot be un-flagged as its not a flagged cell.", outcome);
+            }
+        }
+
+        @Nested
+        class OptionsTest {
+
+            @Test
+            void testGameDifficulty() {
+                Printer.Options.gameDifficulty();
+                String outcome = outContent.toString();
+                outcome = outcome.replaceAll("[\\s]+$","");
+                Assertions.assertEquals("\nInvalid input. This cell cannot be un-flagged as its not a flagged cell.", outcome);
+            }
+
+            @Test
+            void testRunningGameOptions() {
+                int hint = 3;
+                Printer.Options.runningGameOptions(hint);
+                String outcome = outContent.toString();
+                outcome = outcome.replaceAll("[\\s]+$","");
+                Assertions.assertEquals("\nInvalid input. This cell cannot be un-flagged as its not a flagged cell.", outcome);
+            }
+
+        }
     }
 }
